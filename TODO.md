@@ -1,0 +1,4 @@
+- [x] Fix CustomerJourney image paths so images load from Next.js /public
+- [x] Replace any incorrect image src values (e.g. "public/images/..." -> "/images/...") in components/Home/Customerjourney.tsx
+- [x] Verify that images resolve by running dev/build and direct image URL checks
+- [ ] Update mobile + desktop rendering paths consistently

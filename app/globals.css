@@ -1,0 +1,327 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   FONTS
+   - Montserrat -> loaded via next/font in app/layout.tsx (NOT here).
+     next/font sets a CSS variable, e.g. --font-montserrat, which @theme
+     below maps to var(--font-display). This avoids the @import-order
+     build error and self-hosts the font automatically.
+   - Satoshi    -> Body/UI face. DISABLED below until the file actually
+     exists, because referencing a missing file causes a 404 on every
+     page load. To re-enable:
+       1. Download Satoshi-Variable.woff2 from
+          https://www.fontshare.com/fonts/satoshi
+       2. Place it at /public/fonts/Satoshi-Variable.woff2
+       3. Uncomment the @font-face block below
+       4. Change --font-body back to include "Satoshi" first (see @theme)
+   ========================================================================== */
+
+/*
+@font-face {
+  font-family: "Satoshi";
+  src: url("/fonts/Satoshi-Variable.woff2") format("woff2");
+  font-weight: 300 900;
+  font-style: normal;
+  font-display: swap;
+}
+*/
+
+/* ==========================================================================
+   THEME TOKENS (Tailwind v4 CSS-first config)
+   Palette derived from the supplied swatch, lightest -> darkest
+   ========================================================================== */
+@theme {
+  --font-display: var(--font-lato), ui-sans-serif, system-ui, sans-serif;
+  /* "Satoshi" removed from the front of this stack until the font file
+     actually exists in /public/fonts -- otherwise every page load tries
+     to fetch it and 404s. Falls back to a clean system font stack for now. */
+  --font-body: var(--font-lato), ui-sans-serif, system-ui, sans-serif;
+
+
+  --color-white: #ffffff;
+
+  --color-violet-50: #eacffc;
+  --color-violet-100: #d59efa;
+  --color-violet-200: #c06ef7;
+  --color-violet-300: #ab3df5;
+  --color-violet-400: #960df2;
+  --color-violet-500: #780ac2;
+  --color-violet-600: #5a0891;
+  --color-violet-700: #3c0561;
+
+  --color-luxury-bg: #0d0217;
+  --color-luxury-surface: #170528;
+
+  /* Text colors for LIGHT (white-background) sections, e.g. Problem section */
+  --color-ink-900: #0f172a;
+  --color-ink-600: #475569;
+
+  --shadow-glow-sm: 0 0 20px -4px rgba(150, 13, 242, 0.45);
+  --shadow-glow-md: 0 0 40px -6px rgba(150, 13, 242, 0.55);
+  --shadow-glow-lg: 0 0 80px -10px rgba(150, 13, 242, 0.6);
+
+  --ease-luxury: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ==========================================================================
+   BASE
+   IMPORTANT: body no longer hardcodes a text color. This project mixes dark
+   sections (Hero, Solution) and light sections (Problem) on the same page.
+   If body forces `color: white`, any text in a light section that forgets
+   an explicit color class renders white-on-white and disappears.
+   Each section is responsible for setting its own text color via
+   `.section-dark` / `.section-light` (below) or direct Tailwind classes.
+   ========================================================================== */
+
+* {
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--color-ink-900); /* safe default: dark text, works on white sections */
+  background-color: var(--color-white);
+  min-height: 100dvh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Apply to any section with a dark/luxury background (Hero, Solution, etc.) */
+.section-dark {
+  color: var(--color-white);
+  background-color: var(--color-luxury-bg);
+  background-image:
+    radial-gradient(ellipse 80% 60% at 15% -10%, rgba(150, 13, 242, 0.35), transparent 60%),
+    radial-gradient(ellipse 70% 50% at 100% 10%, rgba(192, 110, 247, 0.22), transparent 60%),
+    radial-gradient(ellipse 60% 50% at 50% 100%, rgba(58, 5, 97, 0.5), transparent 65%),
+    linear-gradient(180deg, #0d0217 0%, #170528 45%, #0d0217 100%);
+}
+
+/* Apply to any section with a white/light background (Problem, etc.) */
+.section-light {
+  color: var(--color-ink-900);
+  background-color: var(--color-white);
+}
+
+::selection {
+  background: var(--color-violet-400);
+  color: var(--color-white);
+}
+
+/* Slim luxury scrollbar */
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: var(--color-luxury-bg); }
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--color-violet-300), var(--color-violet-500));
+  border-radius: 999px;
+  border: 2px solid var(--color-luxury-bg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ==========================================================================
+   REUSABLE PREMIUM UTILITIES
+   ========================================================================== */
+
+/* Fluid gradient headline text — for use on DARK sections only */
+.text-gradient-luxury {
+  background: linear-gradient(120deg, #ffffff 0%, var(--color-violet-100) 45%, var(--color-violet-400) 100%);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gradient-shift 8s ease-in-out infinite;
+}
+
+/* Same gradient headline treatment, tuned for LIGHT sections (no white stop) */
+.text-gradient-luxury-light {
+  background: linear-gradient(120deg, var(--color-violet-600) 0%, var(--color-violet-400) 50%, var(--color-violet-300) 100%);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gradient-shift 8s ease-in-out infinite;
+}
+
+/* Glassmorphism card, used for pricing/feature panels — DARK sections only */
+.glass-panel {
+  position: relative;
+  z-index: 2;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.015));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-radius: 1.25rem;
+  transition: transform 0.5s var(--ease-luxury), box-shadow 0.5s var(--ease-luxury), border-color 0.5s var(--ease-luxury);
+}
+
+.glass-panel:hover {
+  transform: translateY(-6px);
+  border-color: rgba(192, 110, 247, 0.5);
+  box-shadow: var(--shadow-glow-md);
+}
+
+/* Primary CTA button with shimmer sweep on hover */
+/* Primary CTA button with shimmer sweep on hover */
+.btn-luxury {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--color-ink-900);
+  padding: 0.9rem 2.2rem;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #facc15, #eab308);
+  box-shadow: 0 0 20px -4px rgba(234, 179, 8, 0.45);
+  transition: transform 0.35s var(--ease-luxury), box-shadow 0.35s var(--ease-luxury);
+}
+
+.btn-luxury::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(120deg, transparent 20%, rgba(255, 255, 255, 0.35) 50%, transparent 80%);
+  transform: translateX(-120%);
+  transition: transform 0.7s var(--ease-luxury);
+}
+
+.btn-luxury:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 0 80px -10px rgba(234, 179, 8, 0.6);
+}
+
+.btn-luxury:hover::before {
+  transform: translateX(120%);
+}
+
+.btn-luxury:active {
+  transform: translateY(0) scale(0.98);
+}
+/* Subtle hover-lift for cards, icons, list items */
+.hover-lift {
+  transition: transform 0.35s var(--ease-luxury), box-shadow 0.35s var(--ease-luxury);
+}
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-glow-sm);
+}
+
+/* Animated gradient border wrapper (wrap any element) — DARK sections */
+.border-gradient-luxury {
+  position: relative;
+  border-radius: 1.25rem;
+  padding: 1px;
+  background: linear-gradient(120deg, var(--color-violet-400), var(--color-violet-100), var(--color-violet-500));
+  background-size: 200% 200%;
+  animation: gradient-shift 6s ease-in-out infinite;
+}
+.border-gradient-luxury > * {
+  border-radius: inherit;
+  background: var(--color-luxury-surface);
+}
+
+/* Ambient floating accents for hero sections */
+.float-slow { animation: float 7s ease-in-out infinite; }
+.float-slower { animation: float 11s ease-in-out infinite; }
+
+/* Fade + rise reveal, pair with an IntersectionObserver in TS */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.8s var(--ease-luxury), transform 0.8s var(--ease-luxury);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Scroll-triggered fade-in helpers ────────────────────────────────────
+   Usage: add `fade-in-section` to any element plus an optional
+   `delay-N` class for staggered children.
+   IntersectionObserver (via useFadeIn hook) adds `.visible` to trigger.
+   ──────────────────────────────────────────────────────────────────────── */
+
+.fade-in-section {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 0.75s var(--ease-luxury),
+    transform 0.75s var(--ease-luxury);
+}
+.fade-in-section.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Stagger delays for sequenced child items */
+.delay-0  { transition-delay:   0ms; }
+.delay-1  { transition-delay: 100ms; }
+.delay-2  { transition-delay: 200ms; }
+.delay-3  { transition-delay: 300ms; }
+.delay-4  { transition-delay: 400ms; }
+.delay-5  { transition-delay: 500ms; }
+.delay-6  { transition-delay: 600ms; }
+.delay-7  { transition-delay: 700ms; }
+
+/* ==========================================================================
+   KEYFRAMES
+   ========================================================================== */
+
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) translateX(0); }
+  50% { transform: translateY(-18px) translateX(8px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: var(--shadow-glow-sm); }
+  50% { box-shadow: var(--shadow-glow-lg); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-pulse-glow { animation: pulse-glow 3s ease-in-out infinite; }
+
+/* Shimmer loading / premium skeleton */
+.shimmer-luxury {
+  background: linear-gradient(90deg, var(--color-luxury-surface) 25%, var(--color-violet-500) 50%, var(--color-luxury-surface) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 2.2s linear infinite;
+}
+
+/* ==========================================================================
+   RESPONSIVE FLUID TYPE (works with Tailwind text-* overrides too)
+   ========================================================================== */
+
+.h-display {
+  font-size: clamp(2.25rem, 5vw + 1rem, 5rem);
+}
+.h-subdisplay {
+  font-size: clamp(1.25rem, 1.5vw + 0.75rem, 1.75rem);
+}
