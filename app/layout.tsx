@@ -6,7 +6,7 @@ import "@fontsource/lato/900.css";
 import "./globals.css";
 import Footer from "@/components/layout/Footer";
 import { LeadModalProvider } from "@/components/LeadModalProvider";
-
+import StickyFooterCTA from "@/components/Home/StickyFooterCTA";
 
 export const metadata: Metadata = {
   title: "NFC Funnel",
@@ -25,6 +25,7 @@ export default function RootLayout({
         <LeadModalProvider>
           {children}
           <Footer />
+          <StickyFooterCTA />
         </LeadModalProvider>
       </body>
     </html>
