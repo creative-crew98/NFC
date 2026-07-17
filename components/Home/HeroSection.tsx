@@ -61,10 +61,11 @@ export default function Hero() {
           ref={headingRef}
           className={`fade-in-section mx-auto max-w-3xl text-center${headingVisible ? " visible" : ""}`}
         >
-          <div className="mb-5 inline-flex w-fit items-center gap-2 rounded-full border border-amber-600/30 bg-amber-950/90 px-4 py-1 backdrop-blur-sm">
+          <div className="mb-5 z-1000 inline-flex w-fit items-center gap-2 rounded-full border border-amber-600/30 bg-amber-950/90 px-4 py-1 backdrop-blur-sm">
             <Sparkles className="h-3.5 w-3.5 text-amber-300" />
             <span className="text-xs font-medium tracking-wide text-amber-400">
-              <span className="font-bold">DONED-FOR-YOU</span> SALES FUNNEL SYSTEMS
+              <span className="font-bold">DONE-FOR-YOU</span>
+              <span className="font-bold"> SALES FUNNEL SYSTEMS</span>
             </span>
           </div>
 
