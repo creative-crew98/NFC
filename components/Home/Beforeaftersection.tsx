@@ -30,7 +30,7 @@ export default function BeforeAfterSection() {
   const { ref: cardsRef, isVisible: cardsVisible } = useFadeIn<HTMLDivElement>(0.05);
 
   return (
-    <section className="relative isolate overflow-hidden bg-white  px-6 py-20 pb-5 md:py-28">
+    <section className="relative isolate overflow-hidden bg-white px-3 py-20 pb-5 sm:px-6 md:py-28">
       {/* Decorative animation stays outside the card container and behind content. */}
       {/* Decorative animation stays outside the card container and behind content. */}
       {/* Decorative animation stays outside the card container and behind content. */}
@@ -54,15 +54,15 @@ export default function BeforeAfterSection() {
           ref={headingRef}
           className={`fade-in-section${headingVisible ? " visible" : ""}`}
         >
-        <h2 className="text-center font-display text-3xl font-extrabold leading-[1.15] text-black sm:text-4xl md:text-5xl">
-          Before <span className="text-slate-400">vs</span>{" "}
-          <span className="bg-gradient-to-r from-violet-600 to-violet-500 bg-clip-text text-transparent">
-            After
-          </span>
-        </h2>
-        <p className="mx-auto mt-5 max-w-xl text-center text-lg leading-relaxed text-slate-600">
-          This is the difference a structured funnel makes to your business.
-        </p>
+          <h2 className="text-center font-display text-3xl font-extrabold leading-[1.15] text-black sm:text-4xl md:text-5xl">
+            Before <span className="text-slate-400">vs</span>{" "}
+            <span className="bg-gradient-to-r from-violet-600 to-violet-500 bg-clip-text text-transparent">
+              After
+            </span>
+          </h2>
+          <p className="mx-auto mt-5 max-w-xl text-center text-lg leading-relaxed text-slate-600">
+            This is the difference a structured funnel makes to your business.
+          </p>
         </div>
 
         {/* Outer container — both cards now live inside one unified,

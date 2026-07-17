@@ -89,7 +89,7 @@ export default function Hero() {
 
         <div
           ref={dashRef}
-          className={`fade-in-section delay-2 relative mx-auto mt-20 max-w-4xl${dashVisible ? " visible" : ""}`}
+          className={`fade-in-section delay-2 relative mx-auto mt-10 max-w-4xl${dashVisible ? " visible" : ""}`}
           style={{ transitionDelay: dashVisible ? "200ms" : "0ms" }}
         >
           <span className="hover-lift absolute -left-3 top-8 z-20 hidden -rotate-6 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 font-display text-[10px] font-semibold tracking-wide text-white/60 backdrop-blur-sm sm:block lg:-left-10">
@@ -170,14 +170,18 @@ export default function Hero() {
               </div>
             </div>
 
-            <div className="flex items-center justify-between border-t border-white/10 bg-white/[0.03] px-6 py-4">
-              <div className="flex items-center gap-2">
+            <div className="flex items-center justify-center border-t border-white/10 bg-white/[0.03] px-6 py-4">
+              <div className="flex items-center justify-center gap-2">
                 {/* <div className="flex -space-x-2">
                   <span className="h-6 w-6 rounded-full border-2 border-[#2E1152] bg-violet-300" />
                   <span className="h-6 w-6 rounded-full border-2 border-[#2E1152] bg-violet-400" />
                   <span className="h-6 w-6 rounded-full border-2 border-[#2E1152] bg-violet-500" />
                 </div> */}
-                <span className="text-xs text-white/100">
+                <span className="relative flex h-2.5 w-2.5 items-center justify-center">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
+                  <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-green-500" />
+                </span>
+                <span className="text-sm text-white/100 leading-none font-bold">
                   Trusted by 200+ Coaches
                 </span>
               </div>

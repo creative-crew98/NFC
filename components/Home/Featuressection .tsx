@@ -11,6 +11,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { useFadeIn } from "@/components/animation/useFadeIn";
+import { SolutionCTAButton } from "@/components/Home/CTAButtons";
 
 type Feature = {
   title: string;
@@ -18,13 +19,6 @@ type Feature = {
   icon: LucideIcon;
   preview: React.ReactNode;
 };
-
-/**
- * Each preview is a tiny illustrative mockup of the feature in action,
- * drawn in the same dark / violet palette as the rest of the page.
- * Swap any of these for a real product screenshot later — just replace
- * the <Preview... /> node with an <img src="..." /> of the same size.
- */
 
 function PreviewFrame({ children }: { children: React.ReactNode }) {
   return (
@@ -210,9 +204,10 @@ const FEATURES: Feature[] = [
 export default function FeaturesSection() {
   const { ref: headingRef, isVisible: headingVisible } = useFadeIn<HTMLDivElement>();
   const { ref: gridRef, isVisible: gridVisible } = useFadeIn<HTMLDivElement>(0.05);
+  const { ref: ctaRef, isVisible: ctaVisible } = useFadeIn<HTMLDivElement>();
 
   return (
-    <section className="relative overflow-hidden bg-[#0b0714] px-6 py-24 md:py-28">
+    <section className="relative overflow-hidden bg-[#0b0714] px-6 py-15 md:py-28">
       {/* Violet ambient background, matching the tone used elsewhere on the page */}
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(150,13,242,0.16),_transparent_60%)]" />
       <div className="pointer-events-none absolute -bottom-32 left-1/2 h-96 w-[36rem] -translate-x-1/2 rounded-full bg-violet-500/10 blur-[120px]" />
@@ -273,6 +268,15 @@ export default function FeaturesSection() {
               <div className="absolute bottom-0 left-5 right-5 h-px bg-gradient-to-r from-transparent via-violet-400/0 to-transparent transition-colors duration-500 group-hover:via-violet-400/60" />
             </div>
           ))}
+        </div>
+
+        {/* Bottom CTA button — reuses SolutionCTAButton so the link/label
+            stays in sync with the Solution and Hero sections */}
+        <div
+          ref={ctaRef}
+          className={`fade-in-section mt-14 flex justify-center${ctaVisible ? " visible" : ""}`}
+        >
+          <SolutionCTAButton />
         </div>
       </div>
 

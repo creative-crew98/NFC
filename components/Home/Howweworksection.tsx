@@ -11,6 +11,7 @@ import {
   TrendingUp,
   type LucideIcon,
 } from "lucide-react";
+import { SolutionCTAButton } from "@/components/Home/CTAButtons";
 
 type Step = {
   label: string;
@@ -93,11 +94,10 @@ function TimelineStep({ step, index }: { step: Step; index: number }) {
   return (
     <div
       ref={ref}
-      className={`relative flex items-start gap-6 transition-all duration-700 ease-out sm:items-center sm:gap-0 ${
-        isVisible
+      className={`relative flex items-start gap-6 transition-all duration-700 ease-out sm:items-center sm:gap-0 ${isVisible
           ? "translate-y-0 opacity-100"
           : "translate-y-8 opacity-0"
-      }`}
+        }`}
       style={{ transitionDelay: isVisible ? `${index * 90}ms` : "0ms" }}
     >
       {/* Left half (desktop only) */}
@@ -116,9 +116,8 @@ function TimelineStep({ step, index }: { step: Step; index: number }) {
 
       {/* Center node */}
       <div
-        className={`relative z-10 flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-violet-300/40 bg-luxury-bg shadow-[0_0_20px_-4px_rgba(216,180,254,0.7)] transition-transform duration-700 sm:mx-6 ${
-          isVisible ? "scale-100" : "scale-50"
-        }`}
+        className={`relative z-10 flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-violet-300/40 bg-luxury-bg shadow-[0_0_20px_-4px_rgba(216,180,254,0.7)] transition-transform duration-700 sm:mx-6 ${isVisible ? "scale-100" : "scale-50"
+          }`}
         style={{ transitionDelay: isVisible ? `${index * 90 + 150}ms` : "0ms" }}
       >
         <span className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-violet-400 to-violet-500 text-white animate-pulse-glow">
@@ -160,6 +159,8 @@ function TimelineStep({ step, index }: { step: Step; index: number }) {
 export default function HowWeWorkSection() {
   const { ref: headingRef, isVisible: headingVisible } =
     useRevealOnScroll<HTMLDivElement>();
+  const { ref: ctaRef, isVisible: ctaVisible } =
+    useRevealOnScroll<HTMLDivElement>();
 
   return (
     <section className="section-dark relative overflow-hidden px-6 py-24 md:py-28">
@@ -170,9 +171,8 @@ export default function HowWeWorkSection() {
         {/* Heading */}
         <div
           ref={headingRef}
-          className={`mx-auto max-w-2xl text-center transition-all duration-700 ease-out ${
-            headingVisible ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
-          }`}
+          className={`mx-auto max-w-2xl text-center transition-all duration-700 ease-out ${headingVisible ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
+            }`}
         >
           <span className="mb-4 inline-block rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-white/70 backdrop-blur-sm">
             Our Process
@@ -202,6 +202,15 @@ export default function HowWeWorkSection() {
               <TimelineStep key={step.label} step={step} index={index} />
             ))}
           </div>
+        </div>
+
+        {/* Bottom CTA */}
+        <div
+          ref={ctaRef}
+          className={`mt-20 flex justify-center transition-all duration-700 ease-out ${ctaVisible ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
+            }`}
+        >
+          <SolutionCTAButton />
         </div>
       </div>
 

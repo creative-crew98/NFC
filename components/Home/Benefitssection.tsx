@@ -75,7 +75,7 @@ export default function BenefitsSection() {
           {/* Right: growth graph illustration card */}
           <div
             ref={growthRef}
-            className={`fade-in-section delay-3 reveal relative flex flex-col justify-between overflow-hidden rounded-2xl border border-violet-400/20 bg-gradient-to-b from-[#1a0b2e] to-[#0b0714] p-7${growthVisible ? " visible" : ""}`}
+            className={`fade-in-section pt-5 pl-2 delay-3 reveal relative flex flex-col justify-between overflow-hidden rounded-2xl border border-violet-400/20 bg-gradient-to-b from-[#1a0b2e] to-[#0b0714] p-7${growthVisible ? " visible" : ""}`}
           >
             {/* Ambient glow behind the graph */}
             <div className="pointer-events-none absolute left-1/2 top-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-violet-500/20 blur-[80px]" />

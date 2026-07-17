@@ -313,7 +313,7 @@ export default function SolutionSection() {
   );
 
   return (
-    <section className="relative overflow-hidden bg-[#0b0714] px-6 pt-15 pb-24 md:pt-14 md:pb-28">
+    <section className="relative overflow-hidden bg-[#0b0714] px-3 pt-15 pb-24 sm:px-6 md:pt-14 md:pb-28">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(168,85,247,0.12),_transparent_60%)]" />
 
       <div className="relative z-10 mx-auto max-w-5xl">
