@@ -6,23 +6,82 @@ import {
   CalendarCheck,
   Zap,
   TrendingUp,
+  PhoneCall,
+  Mail,
+  UserPlus,
 } from "lucide-react";
-import SideRays from "@/components/animation/Siderays";
+import { useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import { useFadeIn } from "@/components/animation/useFadeIn";
 import { HeroCTAButton } from "@/components/Home/CTAButtons";
 
-const ACTIVITY_FEED = [
-  { label: "Lead captured from landing page", time: "Just now", icon: TrendingUp },
-  { label: "WhatsApp follow-up sent", time: "2m ago", icon: MessageCircle },
-  { label: "Appointment booked", time: "6m ago", icon: CalendarCheck },
-  { label: "Automation triggered", time: "11m ago", icon: Zap },
+// Both of these touch canvas / window under the hood — must be client-only
+// or you'll get a server/client hydration mismatch.
+const DotLottieReact = dynamic(
+  () => import("@lottiefiles/dotlottie-react").then((mod) => mod.DotLottieReact),
+  { ssr: false }
+);
+
+const SideRays = dynamic(
+  () => import("@/components/animation/Siderays"),
+  { ssr: false }
+);
+
+// Pool of possible "events" the live feed rotates through. Add more here
+// any time — the bigger the pool, the less repetitive a long visit feels.
+const NOTIFICATION_POOL = [
+  { label: "Lead captured from landing page", icon: TrendingUp, accent: true },
+  { label: "WhatsApp follow-up sent", icon: MessageCircle },
+  { label: "Appointment booked", icon: CalendarCheck },
+  { label: "Automation triggered", icon: Zap },
+  { label: "New call request received", icon: PhoneCall },
+  { label: "Follow-up email opened", icon: Mail },
+  { label: "New contact added to CRM", icon: UserPlus },
 ];
 
-const CHART_BARS = [38, 55, 46, 68, 60, 82, 74, 94];
+type ActivityItem = {
+  id: number;
+  label: string;
+  icon: (typeof NOTIFICATION_POOL)[number]["icon"];
+  accent?: boolean;
+};
+
+// Cosmetic "time ago" labels by position — index 0 (newest) is always
+// "Just now", regardless of which real event is showing there.
+const TIME_LABELS = ["Just now", "1m ago", "4m ago", "9m ago", "14m ago"];
+
+// Drives the rotating feed: every `intervalMs`, pulls the next item from
+// NOTIFICATION_POOL and pushes it to the top, capping the list at
+// `maxItems`. Runs only client-side (inside useEffect), so the server-
+// rendered list and the client's first paint match exactly — no
+// hydration mismatch, it just starts animating after mount.
+function useLiveActivityFeed(maxItems = 4, intervalMs = 3200) {
+  const [items, setItems] = useState<ActivityItem[]>(() =>
+    NOTIFICATION_POOL.slice(0, maxItems).map((n, i) => ({ ...n, id: i }))
+  );
+  const idRef = useRef(maxItems);
+  const poolIndexRef = useRef(maxItems % NOTIFICATION_POOL.length);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const next = NOTIFICATION_POOL[poolIndexRef.current];
+      poolIndexRef.current = (poolIndexRef.current + 1) % NOTIFICATION_POOL.length;
+      const id = idRef.current++;
+
+      setItems((prev) => [{ ...next, id }, ...prev].slice(0, maxItems));
+    }, intervalMs);
+
+    return () => clearInterval(timer);
+  }, [maxItems, intervalMs]);
+
+  return items;
+}
 
 export default function Hero() {
   const { ref: headingRef, isVisible: headingVisible } = useFadeIn<HTMLDivElement>(0.1, "0px");
   const { ref: dashRef, isVisible: dashVisible } = useFadeIn<HTMLDivElement>(0.08, "0px");
+  const [lottieFailed, setLottieFailed] = useState(false);
+  const activity = useLiveActivityFeed();
 
   return (
     <section
@@ -50,8 +109,6 @@ export default function Hero() {
         />
       </div>
 
-      {/* Ambient glows -- both now violet-family so nothing reads as a
-            leftover blue/green accent against the new background. */}
       <div className="pointer-events-none absolute -top-40 left-1/4 h-96 w-96 rounded-full bg-fuchsia-400/20 blur-[120px]" />
       <div className="pointer-events-none absolute bottom-0 right-0 h-80 w-80 rounded-full bg-violet-500/15 blur-[100px]" />
       <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-white/10 to-transparent" />
@@ -113,24 +170,44 @@ export default function Hero() {
             </div>
 
             <div className="grid grid-cols-1 gap-6 p-6 md:grid-cols-[1.2fr_1fr] md:p-8">
-              <div className="rounded-xl border border-white/10 bg-white/[0.03] p-5">
+              <div className="rounded-xl border border-white/10 bg-white/[0.03] p-2 pb-0">
                 <div className="mb-6 flex items-center justify-between">
                   <span className="font-display text-sm font-semibold text-white/80">
                     Funnel performance
                   </span>
                   <span className="flex items-center gap-1 rounded-full bg-emerald-400/10 px-2.5 py-1 text-[11px] font-medium text-emerald-400 ring-1 ring-emerald-400/20">
-                    <TrendingUp className="h-3 w-3" />
+                    <TrendingUp className="h-5 w-5" />
                     +240%
                   </span>
                 </div>
-                <div className="flex h-32 items-end gap-2">
-                  {CHART_BARS.map((h, i) => (
-                    <div
-                      key={i}
-                      className="flex-1 rounded-t-md bg-gradient-to-t from-violet-500 to-violet-300 transition-all duration-500 hover:from-violet-400 hover:to-violet-100 animate-bar-pulse"
-                      style={{ height: `${h}%`, animationDelay: `${i * 0.15}s` }}
+
+                <div className="relative flex h-50 w-70 items-start justify-center overflow-hidden sm:h-72 md:h-80">
+                  {!lottieFailed ? (
+                    <DotLottieReact
+                      src="/lottie/Growth.lottie"
+                      loop
+                      autoplay
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        transform: "scale(1.1)",
+                        transformOrigin: "top center",
+                      }}
+                      onError={() => setLottieFailed(true)}
                     />
-                  ))}
+                  ) : (
+                    // Fallback so the card never renders blank if the
+                    // .lottie asset is missing or fails to load.
+                    <div className="flex h-80 w-full items-end gap-2 px-2">
+                      {[40, 65, 50, 80, 60, 95].map((h, i) => (
+                        <span
+                          key={i}
+                          className="animate-bar-pulse flex-1 rounded-t-md bg-gradient-to-t from-violet-500/70 to-fuchsia-400/70"
+                          style={{ height: `${h}%`, animationDelay: `${i * 0.12}s` }}
+                        />
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -144,14 +221,14 @@ export default function Hero() {
                     <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
                   </span>
                 </div>
-                <ul className="mt-3 divide-y divide-white/[10]">
-                  {ACTIVITY_FEED.map(({ label, time, icon: Icon }, i) => (
+                <ul className="mt-3 divide-y divide-white/10">
+                  {activity.map(({ id, label, icon: Icon, accent }, i) => (
                     <li
-                      key={label}
-                      className="flex items-center gap-2.5 py-2.5 first:pt-0 last:pb-0"
+                      key={id}
+                      className="notify-in flex items-center gap-2.5 py-2.5 first:pt-0 last:pb-0"
                     >
                       <span
-                        className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-white ${i === 0
+                        className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-white ${i === 0 && accent
                           ? "bg-gradient-to-br from-violet-400 to-violet-500"
                           : "bg-white/[0.06] text-white/100"
                           }`}
@@ -162,7 +239,7 @@ export default function Hero() {
                         {label}
                       </span>
                       <span className="shrink-0 text-[11px] text-white/100">
-                        {time}
+                        {TIME_LABELS[i] ?? `${(i + 1) * 5}m ago`}
                       </span>
                     </li>
                   ))}
@@ -172,11 +249,6 @@ export default function Hero() {
 
             <div className="flex items-center justify-center border-t border-white/10 bg-white/[0.03] px-6 py-4">
               <div className="flex items-center justify-center gap-2">
-                {/* <div className="flex -space-x-2">
-                  <span className="h-6 w-6 rounded-full border-2 border-[#2E1152] bg-violet-300" />
-                  <span className="h-6 w-6 rounded-full border-2 border-[#2E1152] bg-violet-400" />
-                  <span className="h-6 w-6 rounded-full border-2 border-[#2E1152] bg-violet-500" />
-                </div> */}
                 <span className="relative flex h-2.5 w-2.5 items-center justify-center">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
                   <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-green-500" />
@@ -202,22 +274,28 @@ export default function Hero() {
             </p>
           </div>
         </div>
-      </div>
+      </div >
 
       <style jsx>{`
-        @keyframes bar-move {
-          0%,
-          100% {
+        @keyframes notify-in {
+          from {
+            opacity: 0;
+            transform: translateY(-8px);
+          }
+          to {
+            opacity: 1;
             transform: translateY(0);
           }
-          50% {
-            transform: translateY(-10px);
+        }
+        .notify-in {
+          animation: notify-in 420ms ease-out;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .notify-in {
+            animation: none;
           }
         }
-        .animate-bar-pulse {
-          animation: bar-move 1.4s ease-in-out infinite;
-        }
       `}</style>
-    </section>
+    </section >
   );
 }

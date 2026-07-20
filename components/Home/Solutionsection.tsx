@@ -65,24 +65,6 @@ function FunnelConnector({ delayMs = 0 }: { delayMs?: number }) {
           animationDelay: `${delayMs}ms`,
         }}
       />
-      <style jsx>{`
-        @keyframes funnel-flow {
-          0% {
-            top: 0%;
-            opacity: 0;
-          }
-          15% {
-            opacity: 1;
-          }
-          85% {
-            opacity: 1;
-          }
-          100% {
-            top: 100%;
-            opacity: 0;
-          }
-        }
-      `}</style>
     </div>
   );
 }
@@ -490,17 +472,6 @@ export default function SolutionSection() {
           </div>
         </div>
       </div>
-
-      <style jsx>{`
-        .funnel-dash {
-          animation: funnel-dash-travel 2.5s linear infinite;
-        }
-        @keyframes funnel-dash-travel {
-          to {
-            stroke-dashoffset: -28;
-          }
-        }
-      `}</style>
     </section>
   );
 }

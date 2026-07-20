@@ -234,7 +234,7 @@ void main() {
             if (loseCtx) loseCtx.loseContext();
             const canvas = renderer.gl.canvas;
             if (canvas && canvas.parentNode) canvas.parentNode.removeChild(canvas);
-          } catch (e) {}
+          } catch (e) { }
         }
         rendererRef.current = null;
         uniformsRef.current = null;
@@ -273,7 +273,7 @@ void main() {
   return (
     <div
       ref={containerRef}
-      className={`relative w-full h-full overflow-hidden pointer-events-none z-3 ${className}`.trim()}
+      className={`relative w-full h-full overflow-hidden pointer-events-none z-10 ${className}`.trim()}
     />
   );
 };

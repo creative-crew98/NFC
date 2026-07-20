@@ -300,7 +300,38 @@ body {
   0%, 100% { box-shadow: var(--shadow-glow-sm); }
   50% { box-shadow: var(--shadow-glow-lg); }
 }
+@keyframes bar-move {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+.animate-bar-pulse {
+  animation: bar-move 1.4s ease-in-out infinite;
+}
+@keyframes funnel-flow {
+  0% {
+    top: 0%;
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    top: 100%;
+    opacity: 0;
+  }
+}
 
+.funnel-dash {
+  animation: funnel-dash-travel 2.5s linear infinite;
+}
+@keyframes funnel-dash-travel {
+  to {
+    stroke-dashoffset: -28;
+  }
+}
 @keyframes shimmer {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
