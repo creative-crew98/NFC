@@ -15,13 +15,8 @@ import dynamic from "next/dynamic";
 import { useFadeIn } from "@/components/animation/useFadeIn";
 import { HeroCTAButton } from "@/components/Home/CTAButtons";
 
-// Both of these touch canvas / window under the hood — must be client-only
-// or you'll get a server/client hydration mismatch.
-const DotLottieReact = dynamic(
-  () => import("@lottiefiles/dotlottie-react").then((mod) => mod.DotLottieReact),
-  { ssr: false }
-);
-
+// Touches canvas / window under the hood — must be client-only or you'll
+// get a server/client hydration mismatch.
 const SideRays = dynamic(
   () => import("@/components/animation/Siderays"),
   { ssr: false }
@@ -123,7 +118,6 @@ function useLiveStats(stats = SNAPSHOT_STATS, minMs = 2500, maxMs = 6000) {
 export default function Hero() {
   const { ref: headingRef, isVisible: headingVisible } = useFadeIn<HTMLDivElement>(0.1, "0px");
   const { ref: dashRef, isVisible: dashVisible } = useFadeIn<HTMLDivElement>(0.08, "0px");
-  const [lottieFailed, setLottieFailed] = useState(false);
   const activity = useLiveActivityFeed();
   const liveStatValues = useLiveStats();
 
@@ -232,34 +226,12 @@ export default function Hero() {
                     centered in whatever height this card ends up with,
                     instead of pinned to the top with dead space below. */}
                 <div className="relative flex h-100 w-full flex-1 items-center justify-center overflow-hidden sm:h-80 md:h-[26rem]">
-                  {!lottieFailed ? (
-                    <DotLottieReact
-                      src="/lottie/Growth.lottie"
-                      loop
-                      autoplay
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                        transform: "scale(1.3)",
-
-
-                      }}
-                      onError={() => setLottieFailed(true)}
-                    />
-                  ) : (
-                    // Fallback so the card never renders blank if the
-                    // .lottie asset is missing or fails to load.
-                    <div className="flex h-full w-full items-end gap-2 px-2">
-                      {[40, 65, 50, 80, 60, 95].map((h, i) => (
-                        <span
-                          key={i}
-                          className="animate-bar-pulse flex-1 rounded-t-md bg-gradient-to-t from-violet-500/70 to-fuchsia-400/70"
-                          style={{ height: `${h}%`, animationDelay: `${i * 0.12}s` }}
-                        />
-                      ))}
-                    </div>
-                  )}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="/images/=.webp"
+                    alt="Funnel performance"
+                    className="h-full w-full object-cover"
+                  />
                 </div>
               </div>
 
