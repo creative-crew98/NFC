@@ -43,10 +43,11 @@ const NOTIFICATION_POOL = [
 // exist purely to balance the card visually against the taller "Funnel
 // performance" card on the left — without them the card was stretching to
 // match height but leaving a big empty gap under the (short) activity list.
+// `value` is the starting point; the live-stats hook increments from here.
 const SNAPSHOT_STATS = [
-  { label: "Leads today", value: "24" },
-  { label: "Automations", value: "9" },
-  { label: "Bookings", value: "6" },
+  { label: "Leads today", value: 24 },
+  { label: "Automations", value: 9 },
+  { label: "Bookings", value: 6 },
 ];
 
 type ActivityItem = {
@@ -87,11 +88,44 @@ function useLiveActivityFeed(maxItems = 4, intervalMs = 1000) {
   return items;
 }
 
+// Ticks the snapshot stats upward at random intervals so the dashboard
+// feels alive rather than static. Each stat increments independently by
+// a small random step, on its own random timer, so they don't all move
+// in lockstep. Client-only (inside useEffect) to avoid hydration
+// mismatches — server render always shows the starting SNAPSHOT_STATS
+// values, then numbers start climbing after mount.
+function useLiveStats(stats = SNAPSHOT_STATS, minMs = 2500, maxMs = 6000) {
+  const [values, setValues] = useState<number[]>(() => stats.map((s) => s.value));
+
+  useEffect(() => {
+    const timers = stats.map((_, i) => {
+      const scheduleNext = () => {
+        const delay = minMs + Math.random() * (maxMs - minMs);
+        return setTimeout(() => {
+          setValues((prev) => {
+            const next = [...prev];
+            next[i] = next[i] + 1;
+            return next;
+          });
+          timers[i] = scheduleNext();
+        }, delay);
+      };
+      return scheduleNext();
+    });
+
+    return () => timers.forEach((t) => clearTimeout(t));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return values;
+}
+
 export default function Hero() {
   const { ref: headingRef, isVisible: headingVisible } = useFadeIn<HTMLDivElement>(0.1, "0px");
   const { ref: dashRef, isVisible: dashVisible } = useFadeIn<HTMLDivElement>(0.08, "0px");
   const [lottieFailed, setLottieFailed] = useState(false);
   const activity = useLiveActivityFeed();
+  const liveStatValues = useLiveStats();
 
   return (
     <section
@@ -281,10 +315,10 @@ export default function Hero() {
                     space that used to be an empty gap when this card
                     stretched to match the taller funnel-performance card. */}
                 <div className="mt-auto grid grid-cols-3 gap-2 border-t border-white/10 pt-4 mt-6">
-                  {SNAPSHOT_STATS.map((stat) => (
+                  {SNAPSHOT_STATS.map((stat, i) => (
                     <div key={stat.label} className="text-center">
-                      <p className="font-display text-base font-bold text-white">
-                        {stat.value}
+                      <p className="font-display text-base font-bold text-white tabular-nums">
+                        {liveStatValues[i]}
                       </p>
                       <p className="mt-0.5 text-[10px] text-white/50">
                         {stat.label}
